@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Agence IMMO'BEAUBRUN
+{%endblock%}
+{% block body %}
+<div class="jumbotron text-center">
+    <div class="container">
+        <h1>Agence IMMO'BEAUBRUN</h1>
+    </div>
+    <p>Bonjour et bienvenue sur le site de l'agence IMMO'BEAUBRUN. Le site est en maintenance et va bientot ouvrir ! </p>
+
+</div>
+
+<div class="container">
+    <h2>Les dernier Biens</h2>
+
+    <div class="row flex">
+        {% for bien in biens %}
+            <div class="col-3">
+                <div class="card">
+                    <div class="body">
+                        <h5 class="card-title">
+                            <a href="{{ path('bien.show', {id: bien.id, slug: bien.slug}) }}">{{ bien.title }} </a>
+                        </h5>
+                        <p class="card-text"> Localisation : {{ bien.ville }} ({{ bien.codePostale}}) </p>
+                        <div class="text-primary" style="font-weight : bold; font-size : 2rem;"> {{bien.prixFormat}} € </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

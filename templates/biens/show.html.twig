@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{bien.title}}
+{%endblock%}
+{% block body %}
+<div class="jumbotron">
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+
+            </div>
+            <div class="col-md-4">
+                <h1>{{bien.title}}</h1>
+                <h2>{{bien.chambres}} ch - {{bien.surface}} m²</h2>
+                <div class="text-primary" style="font-weight : bold; font-size : 4rem;"> {{bien.prixFormat}} € </div>
+                <a href="#" class="btn btn-primary">Contactez l'agence</a>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+   
+
+   
+
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Caractéristiques du bien </h2>
+            <hr>
+            <p>{{bien.description | nl2br}}</p>
+            <hr>
+            <table class="table table-striped">
+                <tr>
+                    <td>Surface habitable</td>
+                    <td>{{bien.surface}} m²</td>
+
+                </tr>
+                <tr>
+                    <td>Nombre de pièces</td>
+                    <td>{{bien.pieces}}</td>
+
+                </tr>
+                <tr>
+                    <td>Nombre de chambres</td>
+                    <td>{{bien.chambres}}</td>
+
+                </tr>
+                <tr>
+                    <td>Étage</td>
+                    <td>{{bien.etage}}</td>
+
+                </tr>
+                <tr>
+                    <td>Nombre de pièces</td>
+                    <td>{{bien.pieces}}</td>
+
+                </tr>
+                <tr>
+                        <td>Ville</td>
+                        <td>{{bien.ville}} - {{bien.codePostale}}</td>
+    
+                    </tr>
+            </table>
+        </div>
+
+            <div class="col-md-4">
+
+                <h2>Spécificitées</h2>
+    
+            
+        </div>
+
+        
+    </div>
+
+
+
+{% endblock %}
