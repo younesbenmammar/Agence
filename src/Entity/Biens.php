@@ -4,10 +4,15 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BiensRepository")
+ * @UniqueEntity("title")
  */
 class Biens
 {
@@ -21,6 +26,12 @@ class Biens
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     *      min = 10,
+     *      max = 70,
+     *      minMessage = "Votre titre ne dois pas comporter moins de {{ limit }} characters",
+     *      maxMessage = "Votre titre ne dois pas comporter plus de {{ limit }} characters"
+     * )
      */
     private $title;
 
@@ -31,6 +42,7 @@ class Biens
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\Range(min=10, max=400)
      */
     private $surface;
 
@@ -66,11 +78,13 @@ class Biens
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/[0-9]{5}$/")
      */
     private $code_postale;
 
     /**
      * @ORM\Column(type="boolean", options={"default": false})
+     * 
      */
     private $disponible = false ;
 
