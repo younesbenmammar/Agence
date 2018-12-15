@@ -1,0 +1,18 @@
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{{ path('bien.show', {slug:bien.slug, id:bien.id}) }}">
+                {{ bien.title }}
+            </a>
+        </h5>
+
+        <p class="card-text"> Localisation : {{ bien.ville }} ({{ bien.codePostale}}) </p>
+        <p class="card-text"> Surface : {{bien.surface }} m² </p>
+
+        <div class="text-primary " style="font-weight : bold; font-size : 2rem;">
+        {{bien.prixFormat}} €
+    </div>
+    </p>
+
+    </div>
+</div>

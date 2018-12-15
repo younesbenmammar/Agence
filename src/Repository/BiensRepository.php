@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\BienRecherche;
 use App\Entity\Biens;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,49 +22,64 @@ class BiensRepository extends ServiceEntityRepository
         parent::__construct($registry, Biens::class);
     }
 
-    public function findByDsiponible(){
+    /**
+     * @param BienRecherche $recherche
+     * @return Query
+     */
+    public function findAllVisibleQuery(BienRecherche $recherche): Query
+    {
+        $query = $this->findVisibleQuery();
 
-        return $this->createQueryBuilder('b')
-        ->where('b.disponible = true')
-        ->getQuery()
-        ->getResult();
+        if ($recherche->getPrixMax()){
+            $query = $query
+                ->andWhere('p.prix <= :maxprix')
+                ->setParameter('maxprix', $recherche->getPrixMax());
+
+        }
+        if ($recherche->getSurfaceMin()){
+            $query = $query
+                ->andWhere('p.surface >= :minsurface')
+                ->setParameter('minsurface', $recherche->getSurfaceMin());
+
+        }
+        return $query->getQuery();
+
     }
 
+
+    /**
+     * @return Biens[]
+     */
+    public function findAllVisible(): array {
+        return $this->findVisibleQuery()
+            ->getQuery()
+            ->getResult();
+
+    }
+
+
+
+
+    /**
+     * @return Biens[]
+     */
     public function findDernier(){
 
-        return $this->createQueryBuilder('b')
-        ->where('b.disponible = true')
+        return $this->findVisibleQuery()
         ->setMaxResults(4)
         ->getQuery()
         ->getResult();
     }
 
-    // /**
-    //  * @return Biens[] Returns an array of Biens objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Biens
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+    private function findVisibleQuery(): QueryBuilder{
+        return $this->createQueryBuilder('p')
+            ->where('p.disponible = true');
+
+
     }
-    */
+
+
+
+
 }

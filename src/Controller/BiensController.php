@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\BienRecherche;
+use App\Form\BienRechercheType;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +19,7 @@ class BiensController extends AbstractController{
 
     /**
      * @var @BienRepository
+     * @R
      */
     private $repository;
 
@@ -26,11 +31,25 @@ class BiensController extends AbstractController{
 
     /**
      * @Route("/biens", name="bien.index");
+     *
      * @return Response
      */
-    public function index():Response {
-        
-        return $this->render('biens/index.html.twig');
+    public function index(PaginatorInterface $paginatior, Request $request):Response {
+
+        $recherche = new BienRecherche();
+        $form = $this->createForm(BienRechercheType::class, $recherche);
+        $form->handleRequest($request);
+
+        $biens = $paginatior->paginate
+        ($this->repository->findAllVisibleQuery($recherche),
+         $request->query->getInt('page', 1),
+        12
+    );
+
+        return $this->render('biens/index.html.twig', [
+            'biens' => $biens,
+            'form' => $form->createView()
+        ]);
 
     }
 
