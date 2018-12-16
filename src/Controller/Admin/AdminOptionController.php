@@ -37,7 +37,7 @@ class AdminOptionController extends AbstractController
             $em->persist($option);
             $em->flush();
 
-            return $this->redirectToRoute('admin.optionindex');
+            return $this->redirectToRoute('admin.option.index');
         }
 
         return $this->render('admin/option/new.html.twig', [
@@ -72,7 +72,7 @@ class AdminOptionController extends AbstractController
      */
     public function delete(Request $request, Option $option): Response
     {
-        if ($this->isCsrfTokenValid('admin/delete'.$option->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$option->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($option);
             $em->flush();
