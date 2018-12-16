@@ -2,107 +2,100 @@
 
 namespace App\Controller\Admin;
 
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Repository\BiensRepository;
 use App\Entity\Biens;
 use App\Form\BienType;
-use Symfony\Component\HttpFoundation\Request;
+use App\Repository\BiensRepository;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-
-
+use Symfony\Component\Routing\Annotation\Route;
 
 class AdminBiensController extends AbstractController
-
 {
+
     /**
-     * @var @BienRepository
+     * @var BiensRepository
      */
     private $repository;
+    /**
+     * @var ObjectManager
+     */
+    private $em;
 
-    public function __construct(BiensRepository $repository,  ObjectManager $manager)
+    public function __construct(BiensRepository $repository, ObjectManager $em)
     {
         $this->repository = $repository;
-        $this->manager = $manager;
-      
+        $this->em = $em;
     }
 
     /**
-     * @Route("/admin", name="admin.bien.index")
+     * @Route("/admin", name="admin.biens.index")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index(BiensRepository $repository)
+    public function index()
     {
-        $bien = $repository->findAll();
-        return $this->render('admin/biens/index.html.twig', [
-            'biens' => $bien
-        ]) ;
-    }
-
-     /**
-     * @Route("/admin/create", name="admin.bien.create")
-     */
-    public function new(Request $request){
-
-        $bien = new Biens();
-        $this->setCreatedAt = new \DateTime();
-
-        $form = $this->createForm(BienType::class, $bien);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()){
-            $this->manager->persist($bien);
-            $this->manager->flush();
-            $this->addFlash('success', 'Votre bien a bien été ajouter');
-            return $this->redirectToRoute('admin.bien.index');
-        }
-        return $this->render('admin/biens/new.html.twig', [
-            'bien' => $bien,
-            'form' => $form->createView()
-
-        ]);
-
-
+        $biens = $this->repository->findAll();
+        return $this->render('admin/biens/index.html.twig', compact('biens'));
     }
 
     /**
-     * @Route("/admin/{id}", name="admin.bien.edit", methods="GET|POST")
+     * @Route("/admin/biens/create", name="admin.biens.new")
      */
-    public function edit(Biens $bien, Request $request){
-        $form = $this->createForm(BienType::class, $bien);
-
+    public function new(Request $request)
+    {
+        $biens = new Biens();
+        $form = $this->createForm(BienType::class, $biens);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()){
-            $this->manager->flush();
-            $this->addFlash('success', 'Votre bien a bien été modifier');
-            return $this->redirectToRoute('admin.bien.index');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->persist($biens);
+            $this->em->flush();
+            $this->addFlash('success', 'Bien créé avec succès');
+            return $this->redirectToRoute('admin.biens.index');
         }
-        return $this->render('admin/biens/edit.html.twig', [
-            'bien' => $bien,
-            'form' => $form->createView()
 
+        return $this->render('admin/biens/new.html.twig', [
+            'biens' => $biens,
+            'form'     => $form->createView()
         ]);
-
     }
 
-     /**
-     * @Route("/admin/{id}", name="admin.bien.delete", methods="DELETE")
+    /**
+     * @Route("/admin/biens/{id}", name="admin.biens.edit", methods="GET|POST")
+     * @param Biens $biens
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function delete(Biens $bien, Request $request){
+    public function edit(Biens $biens, Request $request)
+    {
+        $form = $this->createForm(BienType::class, $biens);
+        $form->handleRequest($request);
 
-        if($this->isCsrfTokenValid('delete' . $bien->getId(), $request->get('_token')) ){
-            $this->manager->remove($bien);
-            $this->manager->flush();
-            $this->addFlash('success', 'Votre bien a bien été supprimer');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->em->flush();
+            $this->addFlash('success', 'Bien modifié avec succès');
+            return $this->redirectToRoute('admin.biens.index');
         }
-        return $this->redirectToRoute('admin.bien.index');
 
-
+        return $this->render('admin/biens/edit.html.twig', [
+            'biens' => $biens,
+            'form'     => $form->createView()
+        ]);
     }
+
+    /**
+     * @Route("/admin/biens/{id}", name="admin.biens.delete", methods="DELETE")
+     * @param Biens $biens
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function delete(Biens $biens, Request $request) {
+        if ($this->isCsrfTokenValid('delete' . $biens->getId(), $request->get('_token'))) {
+            $this->em->remove($biens);
+            $this->em->flush();
+            $this->addFlash('success', 'Bien supprimé avec succès');
+        }
+        return $this->redirectToRoute('admin.biens.index');
+    }
+
 }
-
-
-?> 

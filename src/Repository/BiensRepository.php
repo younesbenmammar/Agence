@@ -42,6 +42,16 @@ class BiensRepository extends ServiceEntityRepository
                 ->setParameter('minsurface', $recherche->getSurfaceMin());
 
         }
+
+        if ($recherche->getOptions()->count() > 0){
+            $k = 0;
+            foreach ($recherche->getOptions() as $option){
+                $k++;
+                $query = $query
+                    ->andWhere(":option$k MEMBER OF p.options")
+                    ->setParameter(":option$k", $option);
+            }
+        }
         return $query->getQuery();
 
     }

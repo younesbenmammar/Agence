@@ -19,7 +19,7 @@ class BiensController extends AbstractController{
 
     /**
      * @var @BienRepository
-     * @R
+     *
      */
     private $repository;
 

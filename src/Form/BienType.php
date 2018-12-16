@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Biens;
+use App\Entity\Option;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,6 +28,11 @@ class BienType extends AbstractType
                     'gaz' => 1,
                    
                 )))
+            ->add('options', EntityType::class, [
+                'class' => Option::class,
+                'choice_label' => 'name',
+                'multiple' => true
+            ])
             ->add('ville')
             ->add('code_postale')
             ->add('disponible')
