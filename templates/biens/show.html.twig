@@ -5,8 +5,22 @@
 {%endblock%}
 {% block body %}
 <div class="jumbotron">
+    {% for label, flashes in app.session.flashbag.all %}
+        {% for flash in flashes %}
+            {% if ( label == 'success' ) %}
+                <div class="alert alert-success alert-dismissible fade show">
+                    {{ flash }}
+                </div>
+            {% elseif ( label == 'error' ) %}
+                <div class="alert alert-danger alert-dismissible fade show">
+                    {{ flash }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
     <div class="container mt-4">
         <div class="row">
+
             <div class="col-md-8">
                 {% if bien.filename %}
                     <img src="{{ vich_uploader_asset(bien, 'imageFile') | imagine_filter('medium') }}" alt="card-image-top" style="width: 100%; height: auto;">
@@ -20,6 +34,31 @@
                 <h2>{{bien.chambres}} ch - {{bien.surface}} m²</h2>
                 <div class="text-primary" style="font-weight : bold; font-size : 4rem;"> {{bien.prixFormat}} € </div>
                 <a href="#" class="btn btn-primary">Contactez l'agence</a>
+                <div id="contactForm" class="mt-4">
+                    {{ form_start(form) }}
+                    <div class="row">
+                        <div class="col">
+                            {{ form_row(form.firstname) }}
+
+                        </div>
+                        <div class="col">
+                            {{ form_row(form.lastname) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ form_row(form.phone) }}
+                        </div>
+                        <div class="col">
+                            {{ form_row(form.email) }}
+                        </div>
+                    </div>
+                    {{ form_rest(form) }}
+                    <button class="btn btn-primary">
+                        Envoyer
+                    </button>
+                    {{ form_end(form) }}
+                </div>
 
 
             </div>
@@ -55,14 +94,15 @@
                 </tr>
                 <tr>
                     <td>Étage</td>
+                    {% if bien.etage == 0 %}
+                    <td>Rez de chaussée</td>
+                    {% else %}
                     <td>{{bien.etage}}</td>
+                    {% endif %}
+
 
                 </tr>
-                <tr>
-                    <td>Nombre de pièces</td>
-                    <td>{{bien.pieces}}</td>
 
-                </tr>
                 <tr>
                         <td>Ville</td>
                         <td>{{bien.ville}} - {{bien.codePostale}}</td>
